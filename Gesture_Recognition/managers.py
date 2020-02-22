@@ -2,7 +2,7 @@
 """
  @Time    : 2/8/2020 3:28 PM
  @Author  : Charles
- @Project : Cameo(Facial Tracking)
+ @Project : Gesture_Recognition
  @File    : managers.py
  @Software: PyCharm
 """
@@ -34,6 +34,9 @@ class CaptureManager:
         # fps，每秒传输帧数
         self._fpsEstimate = None
 
+        # 用于标记当前是第几帧
+        # self._frameNum = 0
+
         # 传入一个Detect对象用于手的检测
         self._detect = None
 
@@ -54,9 +57,14 @@ class CaptureManager:
         if self._enteredFrame and self._frame is None:
             # _, self._frame = self._capture.retrieve()
             _, self._frame = self._capture.read()
+            # self._frameNum += 1
+            # if self._frameNum == 1:
+            #     print('1')
+            # elif self._frameNum > 1:
+            #     print(self._frameNum)
             self._detect = Detect(self._frame)
 
-            # # Idea1： Based on the HSV color space
+            # Idea1： Based on the HSV color space  效果最差
             # self._detect.skinDetection_HSV()
             # self._frame = self._detect.findHandContours()
 
@@ -64,8 +72,9 @@ class CaptureManager:
             # self._detect.skinDetection_YCrCb1()
             # self._frame = self._detect.findHandContours()
 
-            # Idea3： Based on the YCrCb color space and Otsu threshold segmentation algorithm
+            # Idea3： Based on the YCrCb color space and Otsu threshold segmentation algorithm  效果最好
             self._frame = self._detect.skinDetection_YCrCb2()
+            self._frame = self._detect.findEdges(self._frame)
         return self._frame
 
     @property
