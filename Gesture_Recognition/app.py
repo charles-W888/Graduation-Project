@@ -6,29 +6,32 @@
  @File    : app.py
  @Software: PyCharm
 """
-import gesture_rec
 import sys
 from appUI import loginWin
 from appUI import registerWin
+from appUI import mainApp
 
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
 
 
 if __name__ == '__main__':
-    # gest_rec = gesture_rec.GestureRecognition()
-    # gest_rec.run()
     app = QApplication(sys.argv)
+    mainWin = QMainWindow()
+    ui = mainApp.Ui_MainWindow()
+    ui.setupUi(mainWin)
+    mainWin.show()
+
+    # 登录和注册界面
     loginWidget = QWidget()
     registerWidget = QWidget()
 
-    ui = loginWin.Ui_Form()
-    ui.setupUi(loginWidget)
+    ui_L = loginWin.Ui_Form()
+    ui_L.setupUi(loginWidget)
 
-    ui_2 = registerWin.Ui_Signup()
-    ui_2.setupUi(registerWidget)
+    ui_R = registerWin.Ui_Signup()
+    ui_R.setupUi(registerWidget)
 
-    loginWidget.show()
-
-    ui.label_2.clicked.connect(loginWidget.close)  # 登录窗口关闭
-    ui.label_2.clicked.connect(registerWidget.show)  # 注册窗口打开
+    ui.pushButton.clicked.connect(loginWidget.show)
+    ui_L.label_2.clicked.connect(loginWidget.close)  # 登录窗口关闭
+    ui_L.label_2.clicked.connect(registerWidget.show)  # 注册窗口打开
     sys.exit(app.exec_())

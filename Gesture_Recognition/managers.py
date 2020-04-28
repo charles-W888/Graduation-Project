@@ -9,6 +9,7 @@
 import cv2
 import numpy as np
 import time
+
 from detectHand import Detect
 
 
@@ -177,6 +178,10 @@ class WindowManager:
         self._windowName = windowName
         self._isWindowCreated = False
 
+        # self.app = QApplication(sys.argv)
+        # self.mainWin = QMainWindow()
+        # self.ui = None
+
     @property
     def isWindowCreated(self):
         return self._isWindowCreated
@@ -191,6 +196,10 @@ class WindowManager:
         """显示窗口"""
 
         cv2.imshow(self._windowName, frame)
+        # self.ui = mainApp.Ui_MainWindow(frame)
+        # self.ui.setupUi(self.mainWin)
+        # self.mainWin.show()
+        # sys.exit(self.app.exec_())
 
     def destroyWindow(self):
         """注销窗口"""

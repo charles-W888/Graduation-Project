@@ -11,8 +11,9 @@ from managers import WindowManager, CaptureManager
 
 
 class GestureRecognition:
-    def __init__(self):
-        self._camera = cv2.VideoCapture(0)
+    def __init__(self, camera):
+        # self._camera = cv2.VideoCapture(0)
+        self._camera = camera
         self._frameNum = 0
         self._windowManager = WindowManager('Gesture Detection', self.onKeypress)
         self._captureManager = CaptureManager(self._camera, self._windowManager, True)
