@@ -3,16 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="3d90dee1-c1d2-48be-ad2b-dfcee71e9f41" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appUI/loginWin.py" beforeDir="false" afterPath="$PROJECT_DIR$/appUI/login_window.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appUI/mainApp.py" beforeDir="false" afterPath="$PROJECT_DIR$/appUI/main_window.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appUI/registerWin.py" beforeDir="false" afterPath="$PROJECT_DIR$/appUI/register_window.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appUI/runLoginWin.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/detectHand.py" beforeDir="false" afterPath="$PROJECT_DIR$/detect_hand.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gesture_rec.py" beforeDir="false" afterPath="$PROJECT_DIR$/gesture_rec.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/managers.py" beforeDir="false" afterPath="$PROJECT_DIR$/managers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tempFile/screenshot.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/venv/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -68,7 +58,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/appUI/main_window.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1638">
+            <state relative-caret-position="-1326">
               <caret line="118" column="47" selection-start-line="118" selection-start-column="47" selection-end-line="118" selection-end-column="47" />
               <folding>
                 <element signature="e#218#228#0" expanded="true" />
@@ -101,6 +91,7 @@
   <component name="Git.Settings">
     <option name="PREVIOUS_COMMIT_AUTHORS">
       <list>
+        <option value="CharlesSI" />
         <option value="Charles &lt;violin_5805@163.com&gt;" />
         <option value="CharlesSI &lt;59240160+charles-w888@users.noreply.github.com&gt;" />
       </list>
@@ -392,7 +383,7 @@
       <workItem from="1590573186144" duration="4185000" />
       <workItem from="1590633284623" duration="25383000" />
       <workItem from="1590678713828" duration="2623000" />
-      <workItem from="1590717138324" duration="27072000" />
+      <workItem from="1590717138324" duration="27322000" />
     </task>
     <task id="LOCAL-00001" summary="adding convex contour paint">
       <created>1582378800207</created>
@@ -415,11 +406,18 @@
       <option name="project" value="LOCAL" />
       <updated>1588051703525</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="add a games and improve the recognition">
+      <created>1590752240382</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1590752240383</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="227304000" />
+    <option name="totallyTimeSpent" value="227554000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -516,7 +514,8 @@
     <MESSAGE value="adding convex contour paint" />
     <MESSAGE value="adding UI and modify some funcs" />
     <MESSAGE value="check some UI files" />
-    <option name="LAST_COMMIT_MESSAGE" value="check some UI files" />
+    <MESSAGE value="add a games and improve the recognition" />
+    <option name="LAST_COMMIT_MESSAGE" value="add a games and improve the recognition" />
   </component>
   <component name="WindowStateProjectService">
     <state x="413" y="131" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" />
@@ -775,7 +774,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/appUI/main_window.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1638">
+        <state relative-caret-position="-1326">
           <caret line="118" column="47" selection-start-line="118" selection-start-column="47" selection-end-line="118" selection-end-column="47" />
           <folding>
             <element signature="e#218#228#0" expanded="true" />
