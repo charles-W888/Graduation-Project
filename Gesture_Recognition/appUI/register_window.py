@@ -12,7 +12,8 @@ from PyQt5.QtGui import QPalette, QBrush
 
 
 class Ui_Signup(object):
-    def setupUi(self, Signup):
+    def setupUi(self, Signup, user):
+        self.__user = user
         Signup.setObjectName("Signup")
         Signup.resize(450, 561)
         Signup.setFixedSize(450, 561)
@@ -161,3 +162,10 @@ class Ui_Signup(object):
 
     def sign_up(self):
         print("click the Sign up button.")
+        username = self.unameEdit.text()
+        passwd = self.pswEdit.text()
+        # print(type(username))
+        # print(type(passwd))
+        if self.__user.user_register(username, passwd):
+            QtWidgets.QMessageBox.information(self, "Check Box", "Success Sign Up!")
+        self.__user.closeDB()

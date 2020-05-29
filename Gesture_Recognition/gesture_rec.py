@@ -11,9 +11,9 @@ from managers import WindowManager, CaptureManager
 
 
 class GestureRecognition:
-    def __init__(self, camera):
-        # self._camera = cv2.VideoCapture(0)
-        self._camera = camera
+    def __init__(self):
+        self._camera = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        # self._camera = camera
         self._frameNum = 0
         self._windowManager = WindowManager('Gesture Detection', self.onKeypress)
         self._captureManager = CaptureManager(self._camera, self._windowManager, True)
@@ -26,15 +26,15 @@ class GestureRecognition:
         """
         self._windowManager.createWindow()
         while self._windowManager.isWindowCreated:
-            self._frameNum += 1
+            # self._frameNum += 1
             self._captureManager.enterFrame()
 
             # 帧差法去除背景
-            if self._frameNum == 1:
-                bgFrame = self._captureManager.frame
-            if self._frameNum > 1:
-                frame = self._captureManager.frame
-                frame = cv2.subtract(bgFrame, frame)
+            # if self._frameNum == 1:
+            #     bgFrame = self._captureManager.frame
+            # if self._frameNum > 1:
+            frame = self._captureManager.frame
+                # frame = cv2.subtract(bgFrame, frame)
             self._captureManager.exitFrame()
             self._windowManager.processEvents()
 
@@ -57,3 +57,8 @@ class GestureRecognition:
         elif keycode == 27:  # Esc
             self._camera.release()
             self._windowManager.destroyWindow()
+
+
+if __name__ == '__main__':
+    gest_rec = GestureRecognition()
+    gest_rec.run()

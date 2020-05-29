@@ -12,7 +12,8 @@ from PyQt5.QtGui import QPalette, QBrush
 
 
 class Ui_Form(QtWidgets.QWidget):
-    def setupUi(self, Form):
+    def setupUi(self, Form, user):
+        self.__user = user
         Form.setObjectName("Form")
         Form.resize(340, 473)
         Form.setFixedSize(340, 473)
@@ -152,9 +153,19 @@ class Ui_Form(QtWidgets.QWidget):
         self.label_2.setText(_translate("Form", "Create an account."))
         self.title.setText(_translate("Form", "Sign in to HANKit"))
 
-    def onClick(self, Form):
+    def onClick(self):
         print("Click the button.")
-        # QtWidgets.QMessageBox.information(Form, "Check Box", "Success Log in!")
+        username = self.uname.text()
+        passwd = self.psw.text()
+        if self.__user.user_login(username, passwd):
+            print('Login OK')
+            reply = QtWidgets.QMessageBox.information(self, "Check Box", "Success Log in!")
+            self.uname.setText("")
+            self.psw.setText("")
+            self.close()
+        else:
+            reply = QtWidgets.QMessageBox.warning(self, 'Check Box', 'Fail Log!')
+        self.__user.closeDB()
 
 
 class MyButton(QtWidgets.QPushButton):

@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 import time
 
-from detectHand import Detect
+from detect_hand import Detect
 
 
 # 用于视频图像管理。读取新的帧，将帧分派到一个或多个输出中
@@ -24,6 +24,8 @@ class CaptureManager:
         self._channel = 0
         self._enteredFrame = False
         self._frame = None
+        self._originFrame = None
+        self._roi = None
         self._imageFilename = None
         self._videoFilename = None
         self._videoEncoding = None
@@ -35,11 +37,12 @@ class CaptureManager:
         # fps，每秒传输帧数
         self._fpsEstimate = None
 
-        # 用于标记当前是第几帧
-        # self._frameNum = 0
-
         # 传入一个Detect对象用于手的检测
         self._detect = None
+
+        # 手势库中每个手势样本数
+        self._numOfSamples = 100
+        self._count = 0
 
     # 设置只读属性
     @property
@@ -58,12 +61,10 @@ class CaptureManager:
         if self._enteredFrame and self._frame is None:
             # _, self._frame = self._capture.retrieve()
             _, self._frame = self._capture.read()
-            # self._frameNum += 1
-            # if self._frameNum == 1:
-            #     print('1')
-            # elif self._frameNum > 1:
-            #     print(self._frameNum)
+            self._originFrame = self._frame
             self._detect = Detect(self._frame)
+
+            # 三种肤色识别方法：
 
             # Idea1： Based on the HSV color space  效果最差
             # self._detect.skinDetection_HSV()
@@ -74,9 +75,25 @@ class CaptureManager:
             # self._frame = self._detect.findHandContours()
 
             # Idea3： Based on the YCrCb color space and Otsu threshold segmentation algorithm  效果最好
-            self._frame = self._detect.skinDetection_YCrCb2()
-            self._frame = self._detect.findEdges(self._frame)
+            self._roi = self._detect.cutROI(self._originFrame, 0, 0, 300, 300)
+            self._roi = self._detect.skinDetection_YCrCb2()
+            self._roi = self._detect.findEdges(self._roi)
+
+            mirroredROI = np.fliplr(self._roi).copy()
+            # cv2.namedWindow('ROI')
+            cv2.imshow('ROI', mirroredROI)
+            # CaptureManager.saveROI(self, mirroredROI)
         return self._frame
+
+    def saveROI(self, img):
+        if self._count >= self._numOfSamples:
+            self._count = 0
+            return
+        self._count += 1
+        name = 'handImg/1_' + str(self._count) + '.png'
+        cv2.imwrite(name, img)
+        print('Save Image:' + str(self._count))
+        time.sleep(0.3)
 
     @property
     def isWritingImage(self):
@@ -120,10 +137,15 @@ class CaptureManager:
             if self.shouldMirrorPreview:
 
                 # 向左 / 右方向翻转阵列，即翻转图像
-                mirroredFrame = np.fliplr(self._frame).copy()
+                # mirroredFrame = np.fliplr(self._frame).copy()
+                # self.previewWindowManager.show(mirroredFrame)
+                mirroredFrame = np.fliplr(self._originFrame).copy()
                 self.previewWindowManager.show(mirroredFrame)
+                # return mirroredFrame  # 返回当前图像给主界面
             else:
-                self.previewWindowManager.show(self._frame)
+                # self.previewWindowManager.show(self._frame)
+                self.previewWindowManager.show(self._originFrame)
+                # return self._originFrame
 
         # 将图像写入文件
         if self.isWritingImage:
@@ -178,10 +200,6 @@ class WindowManager:
         self._windowName = windowName
         self._isWindowCreated = False
 
-        # self.app = QApplication(sys.argv)
-        # self.mainWin = QMainWindow()
-        # self.ui = None
-
     @property
     def isWindowCreated(self):
         return self._isWindowCreated
@@ -196,10 +214,6 @@ class WindowManager:
         """显示窗口"""
 
         cv2.imshow(self._windowName, frame)
-        # self.ui = mainApp.Ui_MainWindow(frame)
-        # self.ui.setupUi(self.mainWin)
-        # self.mainWin.show()
-        # sys.exit(self.app.exec_())
 
     def destroyWindow(self):
         """注销窗口"""
