@@ -164,8 +164,9 @@ class Ui_Signup(object):
         print("click the Sign up button.")
         username = self.unameEdit.text()
         passwd = self.pswEdit.text()
+        self.__user.user_register(username, passwd)
         # print(type(username))
         # print(type(passwd))
-        if self.__user.user_register(username, passwd):
-            QtWidgets.QMessageBox.information(self, "Check Box", "Success Sign Up!")
+        # if self.__user.user_register(username, passwd):
+        #     QtWidgets.QMessageBox.information(self, "Check Box", "Success Sign Up!")
         self.__user.closeDB()

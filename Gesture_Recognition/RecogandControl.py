@@ -11,7 +11,7 @@ import win32api
 import win32con
 
 
-def mouse_event_respon(x, y, label=0):
+def mouse_event_respon(label=0):
     """
     鼠标响应事件
     :param label:   事件类型
@@ -19,7 +19,7 @@ def mouse_event_respon(x, y, label=0):
     :param y: 鼠标y轴坐标
     :return: null
     """
-    mouse_move(x, y)
+    # mouse_move(x, y)
     if label == 0:
         return None
     if label == 2:  # 左键按下

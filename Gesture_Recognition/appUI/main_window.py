@@ -8,7 +8,6 @@
 
 
 import cv2
-from datetime import datetime
 import numpy as np
 import random
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -19,6 +18,7 @@ import fingertipDetection as fgdt
 import gestureLib.fourierDescrip as fd
 from gestureLib.gesture_svm import ClassifierSVM
 import RecogandControl as rc
+from saveLog import write_log
 
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
@@ -29,7 +29,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # self.camera = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # DSHOW用于解决[ WARN:1] terminating async callback
         self.timer_camera.timeout.connect(self.show_cam)
         self.res = set()
-        self.seed = random.randint(1, 3)
+        self.seed = 0
+        self.score = 0
+        self.pageFlag = 0
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -125,8 +127,22 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         font.setItalic(True)
         font.setPointSize(15)
         self.label_9.setFont(font)
-
         self.stackedWidget.addWidget(self.page_2)
+
+        self.page_3 = QtWidgets.QWidget()
+        self.page_3.setObjectName("page_3")
+        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.page_3)
+        self.plainTextEdit.setGeometry(QtCore.QRect(40, 60, 900, 430))
+        self.plainTextEdit.setObjectName("plainTextEdit")
+        font = QtGui.QFont()
+        font.setFamily("STZhongsong")
+        font.setPointSize(13)
+        self.plainTextEdit.setFont(font)
+        self.plainTextEdit.setPlainText("操作手册\n1.手势控制交互.")
+        self.plainTextEdit.setReadOnly(True)
+        self.viewInst()
+        self.stackedWidget.addWidget(self.page_3)
+
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(920, 0, 80, 31))
         font = QtGui.QFont()
@@ -134,18 +150,18 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.pushButton.setFont(font)
         self.pushButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.pushButton.setObjectName("pushButton")
-        self.label = QtWidgets.QPushButton(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(809, 0, 111, 31))
-        font = QtGui.QFont()
-        font.setFamily("Georgia")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.label.setFont(font)
-        self.label.setObjectName("label")
+        # self.label = QtWidgets.QPushButton(self.centralwidget)
+        # self.label.setGeometry(QtCore.QRect(809, 0, 111, 31))
+        # font = QtGui.QFont()
+        # font.setFamily("Georgia")
+        # font.setPointSize(10)
+        # font.setBold(True)
+        # font.setWeight(75)
+        # self.label.setFont(font)
+        # self.label.setObjectName("label")
 
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(720, 10, 75, 23))
+        self.pushButton_2.setGeometry(QtCore.QRect(785, 10, 75, 23))
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_2.clicked.connect(self.open_video)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -178,6 +194,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         self.actionoperation_instructions_O = QtWidgets.QAction(MainWindow)
         self.actionoperation_instructions_O.setObjectName("actionoperation_instructions_O")
+        self.actionoperation_instructions_O.triggered.connect(self.switch2)
         self.menuFile_F.addAction(self.actionView_History_V)
         self.menuFile_F.addAction(self.actionSettings_S)
         self.menuFile_F.addSeparator()
@@ -200,7 +217,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.label_7.setText(_translate("MainWindow", "Your Score"))
         self.label_9.setText(_translate("MainWindow", "Fighting!"))
         self.pushButton.setText(_translate("MainWindow", "Log in"))
-        self.label.setText(_translate("MainWindow", "Predict"))
+        # self.label.setText(_translate("MainWindow", "Predict"))
         self.pushButton_2.setText(_translate("MainWindow", "Open"))
         self.startPushButton.setText(_translate("MainWindow", "START!"))
         self.stopPushButton.setText(_translate("MainWindow", "Clear"))
@@ -213,11 +230,23 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.actionRock_Paper_Scissors_R.setText(_translate("MainWindow", "Rock Paper Scissors(&R)"))
         self.actionoperation_instructions_O.setText(_translate("MainWindow", "operation instructions(&O)"))
 
+    def viewInst(self):
+        with open("instructions.txt", "r", encoding="utf-8") as f:
+            lines = f.read()
+            self.plainTextEdit.setPlainText(lines)
+            f.close()
+
     def switch(self):
         self.stackedWidget.setCurrentIndex(1)
+        self.pageFlag = 1
 
     def switch1(self):
         self.stackedWidget.setCurrentIndex(0)
+        self.pageFlag = 0
+
+    def switch2(self):
+        self.stackedWidget.setCurrentIndex(2)
+        self.pageFlag = 2
 
     def show_cam(self):
         width, height = 300, 300
@@ -238,11 +267,22 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         self.label_8.setPixmap(QtGui.QPixmap.fromImage(showROI))
 
-        _, contours = fd.fourierDescriptor(self.mirroredROI)
+        fourier_ret, contours = fd.fourierDescriptor(self.mirroredROI)
         (self.x, self.y) = fgdt.detectFinger(self.mirroredROI, contours)  # 找到指尖位置
-        rc.mouse_move(self.x * 8, self.y * 4)
-
-        # self.recognition_gesture()
+        if self.pageFlag == 0:
+            descriptor_in_use = abs(fourier_ret)
+            fd_test = np.zeros((1, 31))
+            temp = descriptor_in_use[1]
+            for k in range(1, len(descriptor_in_use)):
+                fd_test[0, k - 1] = int(100 * descriptor_in_use[k] / temp)
+            classifiersvm = ClassifierSVM()
+            test_svm = classifiersvm.test_fd(fd_test)
+            if test_svm[0] == 1:
+                rc.mouse_move(self.x * 4, self.y * 3)
+                self.res.add(test_svm[0])
+            else:
+                rc.mouse_event_respon(label=test_svm[0])
+                self.res.add(test_svm[0])
 
     def open_video(self):
         if self.timer_camera.isActive() == False:
@@ -260,10 +300,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             self.label_2.clear()
             self.label_3.clear()
             self.pushButton_2.setText('Open')
-            self.write_log()
+            write_log(self.res)
 
-    def recognition_gesture(self):
-        fourier_ret, _ = fd.fourierDescriptor(self._roi)
+    def playGames(self):
+        fourier_ret, _ = fd.fourierDescriptor(self.mirroredROI)
         descriptor_in_use = abs(fourier_ret)
         fd_test = np.zeros((1, 31))
         temp = descriptor_in_use[1]
@@ -272,29 +312,42 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         classifiersvm = ClassifierSVM()
         test_svm = classifiersvm.test_fd(fd_test)
 
-        self.res.add(test_svm[0])
-        print(self.res)
-        rc.mouse_event_respon(self.x, self.y, label=test_svm[0])
+        self.seed = random.randint(1, 3)
+        if self.seed == 1:
+            self.label_6.setPixmap(QtGui.QPixmap('img/fist.png'))
+            self.label_6.setScaledContents(True)
+            if test_svm[0] == 5:
+                self.score += 1
+            if test_svm[0] == 2:
+                self.score -= 1
 
-    def write_log(self):
-        cur_time = datetime.now()
-        utc_time = cur_time.strftime("%Y-%m-%d")
-        with open('recog.log', 'a+') as f:
-            f.write(utc_time)
-            f.write('\n')
-            f.write('=======================\n')
-            for l in self.res:
-                content = ': Recognition label-' + l + '\n'
-                f.write(content)
-            f.write('=======================\n')
-            f.close()
+        if self.seed == 2:
+            self.label_6.setPixmap(QtGui.QPixmap('img/palm.png'))
+            self.label_6.setScaledContents(True)
+            if test_svm[0] == 2:
+                self.score += 1
+            if test_svm[0] == 10:
+                self.score -= 1
 
-    def playGames(self):
-        self.label_6.setPixmap(QtGui.QPixmap('img/fist.png'))
-        self.label_6.setScaledContents(True)
+        if self.seed == 3:
+            self.label_6.setPixmap(QtGui.QPixmap('img/victory.png'))
+            self.label_6.setScaledContents(True)
+            if test_svm[0] == 10:
+                self.score += 1
+            if test_svm[0] == 5:
+                self.score -= 1
+
+        self.lcdNumber.display(self.score)
 
     def stopGames(self):
         self.label_6.clear()
+        if self.camera.isOpened():
+            self.camera.release()
+        if self.timer_camera.isActive():
+            self.timer_camera.stop()
+        self.lcdNumber.setDigitCount(0)
+        self.pushButton_2.setText('Open')
+        self.res.add(self.score)
 
     def closeEvent(self, event):
         reply = QMessageBox.question(self, 'Confirm Exit', "Are you sure you want to exit HANKit?",

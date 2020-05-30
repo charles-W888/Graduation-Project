@@ -40,7 +40,7 @@ class User:
         self.__query.addBindValue(username)
         self.__query.addBindValue(passwd)
         if self.__query.exec_():
-            print('OKOKOKOKO')
+            print('OKOKOKOK!!')
             return True
         return False
 

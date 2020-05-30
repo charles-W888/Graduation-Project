@@ -1,5 +1,0 @@
-<RCC>
-  <qresource prefix="txtlog">
-    <file>recog.log</file>
-  </qresource>
-</RCC>

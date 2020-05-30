@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 
 
 model_path = '../training_model'
-feature_path = 'feature.txt'
+feature_path = 'feature'
 
 class ClassifierSVM:
     def __init__(self):

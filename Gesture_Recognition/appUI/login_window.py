@@ -9,6 +9,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QPalette, QBrush
+from appUI import main_window
 
 
 class Ui_Form(QtWidgets.QWidget):
@@ -157,14 +158,16 @@ class Ui_Form(QtWidgets.QWidget):
         print("Click the button.")
         username = self.uname.text()
         passwd = self.psw.text()
-        if self.__user.user_login(username, passwd):
-            print('Login OK')
-            reply = QtWidgets.QMessageBox.information(self, "Check Box", "Success Log in!")
-            self.uname.setText("")
-            self.psw.setText("")
-            self.close()
-        else:
-            reply = QtWidgets.QMessageBox.warning(self, 'Check Box', 'Fail Log!')
+        self.__user.user_login(username, passwd)
+        print('Login OK')
+        reply = QtWidgets.QMessageBox.information(self, "Check Box", "Success Log in!")
+        # mw = main_window.Ui_MainWindow()
+        # mw.pushButton.setText(username)
+        self.uname.setText("")
+        self.psw.setText("")
+        self.close()
+        # else:
+        #     reply = QtWidgets.QMessageBox.warning(self, 'Check Box', 'Fail Log!')
         self.__user.closeDB()
 
 
